@@ -30,14 +30,12 @@
     let ctx = canvas.getContext("2d");
     let drawing = false;
 
-    // Canvas setup
     ctx.fillStyle = "black";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.strokeStyle = "white";
     ctx.lineWidth = 15;
     ctx.lineCap = "round";
 
-    // Mouse/touch events
     canvas.addEventListener("mousedown", e => drawing = true);
     canvas.addEventListener("mouseup", e => drawing = false);
     canvas.addEventListener("mouseleave", e => drawing = false);
@@ -65,15 +63,13 @@
       document.getElementById("result").innerText = "Draw a number above";
     }
 
-    // Load TensorFlow.js model
     let model;
     async function loadModel() {
-      model = await tf.loadLayersModel("web_model/model.json"); // <-- your converted model path
+      model = await tf.loadLayersModel("web_model/model.json");
       console.log("Model loaded");
     }
     loadModel();
 
-    // Convert canvas to 28x28 grayscale array
     function get28x28CanvasImage() {
       let temp = document.createElement("canvas");
       temp.width = 28;
@@ -83,7 +79,7 @@
       let imgData = tctx.getImageData(0, 0, 28, 28);
       let data = [];
       for (let i = 0; i < imgData.data.length; i += 4) {
-        // Take red channel (grayscale), normalize 0-1
+
         data.push(imgData.data[i] / 255);
       }
       return data;
@@ -100,6 +96,6 @@
       prediction.dispose();
     }
   </script>
-
+<script src="script.js"></script>
 </body>
 </html>
