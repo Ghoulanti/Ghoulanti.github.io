@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Digit Recognizer</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest"></script>
+  <style>
+    body { font-family: Arial, sans-serif; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+    canvas { border: 2px solid black; touch-action: none; }
+    #controls { margin-top: 10px; }
+    button { margin: 0 5px; padding: 5px 10px; }
+    #result { margin-top: 15px; font-size: 1.2em; font-weight: bold; }
+  </style>
+</head>
+<body>
+
+  <h1>Digit Recognizer</h1>
+  <canvas id="canvas" width="280" height="280"></canvas>
+
+  <div id="controls">
+    <button onclick="clearCanvas()">Clear</button>
+    <button onclick="predictDigit()">Predict</button>
+  </div>
+
+  <div id="result">Draw a number above</div>
+
+  <script>
+    let canvas = document.getElementById("canvas");
+    let ctx = canvas.getContext("2d");
+    let drawing = false;
+
+    ctx.fillStyle = "black";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.strokeStyle = "white";
+    ctx.lineWidth = 15;
+    ctx.lineCap = "round";
+
+    canvas.addEventListener("mousedown", e => drawing = true);
+    canvas.addEventListener("mouseup", e => drawing = false);
+    canvas.addEventListener("mouseleave", e => drawing = false);
+    canvas.addEventListener("mousemove", draw);
+
+    canvas.addEventListener("touchstart", e => { drawing = true; draw(e.touches[0]); e.preventDefault(); });
+    canvas.addEventListener("touchend", e => drawing = false);
+    canvas.addEventListener("touchmove", e => { draw(e.touches[0]); e.preventDefault(); });
+
+    function draw(e) {
+      if (!drawing) return;
+      let rect = canvas.getBoundingClientRect();
+      let x = e.clientX - rect.left;
+      let y = e.clientY - rect.top;
+      ctx.lineTo(x, y);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+    }
+
+    function clearCanvas() {
+      ctx.fillStyle = "black";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.beginPath();
+      document.getElementById("result").innerText = "Draw a number above";
+    }
+
+    let model;
+    async function loadModel() {
+      model = await tf.loadLayersModel("web_model/model.json");
+      console.log("Model loaded");
+    }
+    loadModel();
+
+    function get28x28CanvasImage() {
+      let temp = document.createElement("canvas");
+      temp.width = 28;
+      temp.height = 28;
+      let tctx = temp.getContext("2d");
+      tctx.drawImage(canvas, 0, 0, 28, 28);
+      let imgData = tctx.getImageData(0, 0, 28, 28);
+      let data = [];
+      for (let i = 0; i < imgData.data.length; i += 4) {
+
+        data.push(imgData.data[i] / 255);
+      }
+      return data;
+    }
+
+    async function predictDigit() {
+      if (!model) { alert("Model not loaded yet"); return; }
+      let imgData = get28x28CanvasImage();
+      let input = tf.tensor(imgData).reshape([1, 28, 28, 1]);
+      let prediction = model.predict(input);
+      let label = prediction.argMax(-1).dataSync()[0];
+      document.getElementById("result").innerText = "Prediction: " + label;
+      input.dispose();
+      prediction.dispose();
+    }
+  </script>
+<script src="script.js"></script>
+</body>
+</html>
