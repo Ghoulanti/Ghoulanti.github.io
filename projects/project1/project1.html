@@ -1,22 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <link rel="stylesheet" href="style.css">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Digit Recognizer</title>
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest"></script>
+  <style>
+    body { font-family: Arial, sans-serif; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+    canvas { border: 2px solid black; touch-action: none; }
+    #controls { margin-top: 10px; }
+    button { margin: 0 5px; padding: 5px 10px; }
+    #result { margin-top: 15px; font-size: 1.2em; font-weight: bold; }
+  </style>
 </head>
 <body>
-  <div class="theme-toggle">
-  <label>
-    <input type="checkbox" id="themeSwitch">
-    <div class="switch">
-      <span class="icon sun">☀️</span>
-      <span class="icon moon">🌙</span>
-    </div>
-  </label>
-</div>
+
   <h1>Digit Recognizer</h1>
   <canvas id="canvas" width="280" height="280"></canvas>
 
@@ -65,9 +63,10 @@
       document.getElementById("result").innerText = "Draw a number above";
     }
 
+ 
     let model;
     async function loadModel() {
-      model = await tf.loadLayersModel("web_model/model.json");
+      model = await tf.loadLayersModel("web_model/model.json"); 
       console.log("Model loaded");
     }
     loadModel();
@@ -81,7 +80,6 @@
       let imgData = tctx.getImageData(0, 0, 28, 28);
       let data = [];
       for (let i = 0; i < imgData.data.length; i += 4) {
-
         data.push(imgData.data[i] / 255);
       }
       return data;
@@ -98,6 +96,6 @@
       prediction.dispose();
     }
   </script>
-<script src="script.js"></script>
+
 </body>
 </html>
