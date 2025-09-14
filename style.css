@@ -1,9 +1,24 @@
+:root {
+  --bg: #fafafa;
+  --text: #222;
+  --card-bg: #fff;
+  --card-shadow: rgba(0,0,0,0.1);
+}
+
+body.dark {
+  --bg: #121212;
+  --text: #eee;
+  --card-bg: #1e1e1e;
+  --card-shadow: rgba(0,0,0,0.5);
+}
+
 body {
   font-family: sans-serif;
   margin: 0;
-  background: #fafafa;
-  color: #222;
+  background: var(--bg);
+  color: var(--text);
   text-align: center;
+  transition: background 0.3s, color 0.3s;
 }
 
 header {
@@ -20,18 +35,18 @@ header {
 }
 
 .project-card {
-  background: white;
+  background: var(--card-bg);
   padding: 1.5rem;
   border-radius: 1rem;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 10px var(--card-shadow);
   text-decoration: none;
   color: inherit;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.3s;
 }
 
 .project-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+  box-shadow: 0 6px 15px var(--card-shadow);
 }
 
 footer {
@@ -40,3 +55,42 @@ footer {
   color: #666;
 }
 
+.theme-toggle {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+}
+
+.theme-toggle input {
+  display: none;
+}
+
+.switch {
+  width: 50px;
+  height: 25px;
+  background: #ccc;
+  border-radius: 25px;
+  position: relative;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.switch::before {
+  content: "";
+  width: 21px;
+  height: 21px;
+  background: white;
+  border-radius: 50%;
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  transition: transform 0.3s;
+}
+
+input:checked + .switch {
+  background: #4cafef;
+}
+
+input:checked + .switch::before {
+  transform: translateX(25px);
+}
